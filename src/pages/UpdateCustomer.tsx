@@ -59,6 +59,9 @@ export default function UpdateCustomer() {
                 setError("")
                 const response = await customerApi.getCustomerById(slug as string)
                 console.log(response)
+                if (!response) {
+                    throw new Error("No response from server");
+                }
                 const customerData = response.data
 
                 // Update form values after data is fetched
@@ -81,7 +84,7 @@ export default function UpdateCustomer() {
         if (slug) {
             fetchCustomer()
         }
-    }, [slug, form.reset])
+    }, [slug, form])
 
     // 2. Define a submit handler.
     async function onSubmit(data: z.infer<typeof formSchema>) {
@@ -93,7 +96,7 @@ export default function UpdateCustomer() {
 
             const response = await customerApi.updateCustomer(slug as string, data)
 
-            if (response.data) {
+            if (response?.$id) {
                 console.log('Customer updated successfully')
                 alert("Customer updated successfully")
                 navigate("/customer")

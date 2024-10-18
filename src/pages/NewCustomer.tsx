@@ -57,9 +57,10 @@ export default function NewCustomer() {
 
             console.log(data)
 
-            const response = await customerApi.addCustomer(data)
+            const response = await customerApi.createCustomer(data)
+            
 
-            if (response.data) {
+            if (response?.$id) {
                 console.log('Customer created')
                 navigate('/customer')
             }

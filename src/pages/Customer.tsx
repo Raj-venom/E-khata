@@ -25,8 +25,18 @@ const CustomerPage = () => {
         const fetchCustomers = async () => {
             try {
                 const response = await customerApi.getAllCustomers();
-                if (response) {
-                    const data: Customer[] = response;
+                // if (response?.documents) {
+                //     const data: Customer[] = response.documents;
+                //     setCustomers(response.documents);
+                //     console.log(data, "data");
+                // } else {
+                //     console.error('No data found in response');
+                // }
+
+                console.log(response, "response");
+                if (response?.documents) {
+                    // @ts-ignore
+                    const data: Customer[] = response.documents;
                     setCustomers(data);
                     console.log(data, "data");
                 } else {
@@ -39,7 +49,6 @@ const CustomerPage = () => {
 
         fetchCustomers();
     }, []);
-    // console.log(customers, "customers")
 
     const filteredCustomers = customers
         .filter(customer =>

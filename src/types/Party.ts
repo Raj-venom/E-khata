@@ -1,5 +1,5 @@
 export interface Party  {
-    _id: string;
+    $id: string;
     name: string;
     phone: string;
     alternate_phone: string;

@@ -13,7 +13,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { useState } from "react"
 import { useNavigate } from 'react-router-dom'
-import axios from "axios"
+import partyApi from "@/services/partyApi"
 
 const formSchema = z.object({
     name: z.string().min(2, {
@@ -55,19 +55,19 @@ export default function NewParty() {
 
             console.log(data)
 
-            const response = await axios.post("/api/party/register", data)
-
-            if (response.data) {
-                console.log('Party created')
-                navigate('/party')
+            const response = await partyApi.createParty(data)
+            
+            if (response?.$id) {
+            console.log('party created')
+            navigate('/party')
             }
 
         } catch (error: any) {
             console.log(error)
             if (error.response) {
-                setError(error.response.data.error)
+            setError(error.response.data.error)
             } else {
-                setError("An error occurred. Please try again.")
+            setError("An error occurred. Please try again.")
             }
         } finally {
             setLoading(false)

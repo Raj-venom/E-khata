@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/table"
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom'
+import partyApi from '@/services/partyApi';
 // import Header from '@/components/Header/Header';
 
 
@@ -25,11 +26,16 @@ const PartyPage = () => {
     useEffect(() => {
         const fetchParties = async () => {
             try {
-                console.log('Fetching parties...');
-                const response = await fetch('/api/party/all');
-                const data: Party[] = await response.json();
-                setParties(data);
-                console.log(data, "data")
+                const response = await partyApi.getAllParties();
+                console.log(response, "response");
+                if (response?.documents) {
+                    // @ts-ignore
+                    const data: Party[] = response.documents;
+                    setParties(data);
+                    console.log(data, "data");
+                } else {
+                    console.error('No data found in response');
+                }
             } catch (error) {
                 console.error('Error fetching parties:', error);
             }
@@ -101,7 +107,7 @@ const PartyPage = () => {
                     </TableHeader>
                     <TableBody>
                         {filteredParties.map((party, i) => (
-                            <TableRow key={party._id + i} onDoubleClick={() => handleRowClick(party._id)} >
+                            <TableRow key={party.$id + i} onDoubleClick={() => handleRowClick(party.$id)} >
                                 <TableCell>{i + 1}</TableCell>
                                 <TableCell>{party.name}</TableCell>
                                 <TableCell>{party.phone}</TableCell>

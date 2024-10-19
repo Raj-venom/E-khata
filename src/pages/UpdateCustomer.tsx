@@ -62,7 +62,7 @@ export default function UpdateCustomer() {
                 if (!response) {
                     throw new Error("No response from server");
                 }
-                const customerData = response.data
+                const customerData = response
 
                 // Update form values after data is fetched
                 form.reset({

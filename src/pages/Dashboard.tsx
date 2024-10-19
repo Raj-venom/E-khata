@@ -1,7 +1,7 @@
 import PaymentChart from '@/components/BarChart'
 // import Header from '@/components/Header/Header';
 import  {  useEffect, useState } from 'react'
-import axios from 'axios';
+import dashboardApi from '@/services/dashboardApi';
 
 
 function Dashboard() {
@@ -10,11 +10,11 @@ function Dashboard() {
     useEffect(() => {
         const fetchChartData = async () => {
             try {
-                const response = await axios.get('/api/bar-chart');
-                console.log(response.data);
+                const response = await dashboardApi.getTotalAmounts();
+                console.log(response);
                 setChartData({
-                    totalPartyAmount: response.data.totalPartyAmount || 5511,
-                    totalCustomerAmount: response.data.totalCustomerAmount || 5111,
+                    totalPartyAmount: response.totalPartyAmount || 0,
+                    totalCustomerAmount: response.totalCustomerAmount ||0,
                 });
             } catch (error) {
                 console.error('Error fetching chart data:', error);

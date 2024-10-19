@@ -68,18 +68,18 @@ const PartyPage = () => {
 
             <div className="container mx-auto p-4">
                 <h1 className="text-2xl font-bold mb-4">Party List</h1>
-                <div className='flex justify-between mb-4'>
+                <div className='flex flex-col md:flex-row justify-between mb-4'>
                     <input
                         type="text"
                         placeholder="Search parties"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="p-2 border border-gray-600 rounded"
+                        className="p-2 border border-gray-600 rounded mb-2 md:mb-0"
                     />
                     <Button onClick={() => navigate('/new-party')}>Add Party</Button>
                 </div>
-                <div className='flex justify-between mb-4'>
-                    <label className="flex items-center">
+                <div className='flex flex-col md:flex-row justify-between mb-4'>
+                    <label className="flex items-center mb-2 md:mb-0">
                         <input
                             type="checkbox"
                             checked={showRemainingOnly}
@@ -92,34 +92,36 @@ const PartyPage = () => {
                         Sort by Remaining Amount ({sortOrder === 'asc' ? 'Ascending' : 'Descending'})
                     </Button>
                 </div>
-                <Table>
-                    <TableHeader>
-                        <TableRow>
-                            <TableHead>Sn</TableHead>
-                            <TableHead>Name</TableHead>
-                            <TableHead>Phone</TableHead>
-                            <TableHead>Address</TableHead>
-                            <TableHead>Total Amount</TableHead>
-                            <TableHead>Remaining Amount</TableHead>
-                            <TableHead>Remark</TableHead>
-                            <TableHead>Alter Phone</TableHead>
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        {filteredParties.map((party, i) => (
-                            <TableRow key={party.$id + i} onDoubleClick={() => handleRowClick(party.$id)} >
-                                <TableCell>{i + 1}</TableCell>
-                                <TableCell>{party.name}</TableCell>
-                                <TableCell>{party.phone}</TableCell>
-                                <TableCell>{party.address}</TableCell>
-                                <TableCell>{party.total_amount}</TableCell>
-                                <TableCell>{party.remaining_amount}</TableCell>
-                                <TableCell>{party.remark}</TableCell>
-                                <TableCell>{party.alternate_phone}</TableCell>
+                <div className="overflow-x-auto">
+                    <Table>
+                        <TableHeader>
+                            <TableRow>
+                                <TableHead>Sn</TableHead>
+                                <TableHead>Name</TableHead>
+                                <TableHead>Phone</TableHead>
+                                <TableHead>Address</TableHead>
+                                <TableHead>Total Amount</TableHead>
+                                <TableHead>Remaining Amount</TableHead>
+                                <TableHead>Remark</TableHead>
+                                <TableHead>Alter Phone</TableHead>
                             </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
+                        </TableHeader>
+                        <TableBody>
+                            {filteredParties.map((party, i) => (
+                                <TableRow key={party.$id + i} onDoubleClick={() => handleRowClick(party.$id)} >
+                                    <TableCell>{i + 1}</TableCell>
+                                    <TableCell>{party.name}</TableCell>
+                                    <TableCell>{party.phone}</TableCell>
+                                    <TableCell>{party.address}</TableCell>
+                                    <TableCell>{party.total_amount}</TableCell>
+                                    <TableCell>{party.remaining_amount}</TableCell>
+                                    <TableCell>{party.remark}</TableCell>
+                                    <TableCell>{party.alternate_phone}</TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </div>
             </div>
         </>
     );

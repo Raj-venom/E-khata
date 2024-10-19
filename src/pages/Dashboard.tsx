@@ -29,14 +29,12 @@ function Dashboard() {
             {/* <Header /> */}
 
             <div className='flex mt-6 text-3xl justify-center'>
-                <h2 className='' >Welcome to the dashboard</h2>
+                <h2 className='text-center'>Welcome to the dashboard</h2>
             </div>
 
-            <div>
-                <div className='flex w-1/2 h-1/2 ml-96  justify-center mt-24'>
-            
-                <PaymentChart customerTotal={chartData.totalCustomerAmount} wholesalerTotal={chartData.totalPartyAmount}/>
-
+            <div className='flex flex-col items-center mt-6'>
+                <div className='w-full sm:w-3/4 md:w-1/2 lg:w-1/3 xl:w-1/4'>
+                    <PaymentChart customerTotal={chartData.totalCustomerAmount} wholesalerTotal={chartData.totalPartyAmount}/>
                 </div>
             </div>
         </>

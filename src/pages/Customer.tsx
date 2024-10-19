@@ -16,7 +16,7 @@ import { useNavigate } from 'react-router-dom'
 
 const CustomerPage = () => {
     const navigate = useNavigate()
-    const [customers, setCustomers] = useState<Customer[]>([{$id: "", name: "", phone: "", address: "", total_amount: 0, remaining_amount: 0, remark: ""}]);
+    const [customers, setCustomers] = useState<Customer[]>([{ $id: "", name: "", phone: "", address: "", total_amount: 0, remaining_amount: 0, remark: "" }]);
     const [searchTerm, setSearchTerm] = useState('');
     const [showRemainingOnly, setShowRemainingOnly] = useState(true);
     const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
@@ -53,7 +53,7 @@ const CustomerPage = () => {
     const filteredCustomers = customers
         .filter(customer =>
             (customer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            customer.phone.toLowerCase().includes(searchTerm.toLowerCase())) &&
+                customer.phone.toLowerCase().includes(searchTerm.toLowerCase())) &&
             (!showRemainingOnly || customer.remaining_amount > 0)
         )
         .sort((a, b) => {
@@ -70,22 +70,22 @@ const CustomerPage = () => {
 
     return (
         <>
-        
+
 
             <div className="container mx-auto p-4">
                 <h1 className="text-2xl font-bold mb-4">Customer List</h1>
-                <div className='flex justify-between mb-4'>
+                <div className='flex flex-col md:flex-row justify-between mb-4'>
                     <input
                         type="text"
                         placeholder="Search customers"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="p-2 border border-gray-600 rounded"
+                        className="p-2 border border-gray-600 rounded mb-2 md:mb-0 md:mr-2"
                     />
                     <Button onClick={() => navigate('/new-customer')}>Add Customer</Button>
                 </div>
-                <div className='flex justify-between mb-4'>
-                    <label className="flex items-center">
+                <div className='flex flex-col md:flex-row justify-between mb-4'>
+                    <label className="flex items-center mb-2 md:mb-0">
                         <input
                             type="checkbox"
                             checked={showRemainingOnly}
@@ -98,32 +98,34 @@ const CustomerPage = () => {
                         Sort by Remaining Amount ({sortOrder === 'asc' ? 'Ascending' : 'Descending'})
                     </Button>
                 </div>
-                <Table>
-                    <TableHeader>
-                        <TableRow>
-                            <TableHead>Sn</TableHead>
-                            <TableHead>Name</TableHead>
-                            <TableHead>Phone</TableHead>
-                            <TableHead>Address</TableHead>
-                            <TableHead>Total Amount</TableHead>
-                            <TableHead>Remaining Amount</TableHead>
-                            <TableHead>Remark</TableHead>
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        {filteredCustomers.map((customer, i) => (
-                            <TableRow key={customer.$id + i} onDoubleClick={() => handleRowClick(customer.$id)} >
-                                <TableCell>{i + 1}</TableCell>
-                                <TableCell>{customer.name}</TableCell>
-                                <TableCell>{customer.phone}</TableCell>
-                                <TableCell>{customer.address}</TableCell>
-                                <TableCell>{customer.total_amount}</TableCell>
-                                <TableCell>{customer.remaining_amount}</TableCell>
-                                <TableCell>{customer.remark}</TableCell>
+                <div className="overflow-x-auto">
+                    <Table className="min-w-full">
+                        <TableHeader>
+                            <TableRow>
+                                <TableHead>Sn</TableHead>
+                                <TableHead>Name</TableHead>
+                                <TableHead>Phone</TableHead>
+                                <TableHead>Address</TableHead>
+                                <TableHead>Total Amount</TableHead>
+                                <TableHead>Remaining Amount</TableHead>
+                                <TableHead>Remark</TableHead>
                             </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
+                        </TableHeader>
+                        <TableBody>
+                            {filteredCustomers.map((customer, i) => (
+                                <TableRow key={customer.$id + i} onDoubleClick={() => handleRowClick(customer.$id)} >
+                                    <TableCell>{i + 1}</TableCell>
+                                    <TableCell>{customer.name}</TableCell>
+                                    <TableCell>{customer.phone}</TableCell>
+                                    <TableCell>{customer.address}</TableCell>
+                                    <TableCell>{customer.total_amount}</TableCell>
+                                    <TableCell>{customer.remaining_amount}</TableCell>
+                                    <TableCell>{customer.remark}</TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </div>
             </div>
         </>
     );

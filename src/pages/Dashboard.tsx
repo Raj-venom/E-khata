@@ -33,7 +33,7 @@ function Dashboard() {
             </div>
 
             <div className='flex flex-col items-center mt-6'>
-                <div className='w-full sm:w-3/4 md:w-1/2 lg:w-1/3 xl:w-1/4'>
+                <div className='w-full sm:w-3/4 md:w-1/2 lg:w-1/3 xl:w-2/4'>
                     <PaymentChart customerTotal={chartData.totalCustomerAmount} wholesalerTotal={chartData.totalPartyAmount}/>
                 </div>
             </div>

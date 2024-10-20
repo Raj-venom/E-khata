@@ -16,7 +16,7 @@ import { useNavigate } from 'react-router-dom'
 
 const CustomerPage = () => {
     const navigate = useNavigate()
-    const [customers, setCustomers] = useState<Customer[]>([{ $id: "", name: "", phone: "", address: "", total_amount: 0, remaining_amount: 0, remark: "" }]);
+    const [customers, setCustomers] = useState<Customer[]>([{ $id: "", name: "", phone: "", address: "", total_amount: 0, remaining_amount: 0, remark: "", paid_amount: 0 }]);
     const [searchTerm, setSearchTerm] = useState('');
     const [showRemainingOnly, setShowRemainingOnly] = useState(true);
     const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
@@ -107,6 +107,7 @@ const CustomerPage = () => {
                                 <TableHead>Phone</TableHead>
                                 <TableHead>Address</TableHead>
                                 <TableHead>Total Amount</TableHead>
+                                <TableHead>Paid Amount</TableHead>
                                 <TableHead>Remaining Amount</TableHead>
                                 <TableHead>Remark</TableHead>
                             </TableRow>
@@ -119,6 +120,7 @@ const CustomerPage = () => {
                                     <TableCell>{customer.phone}</TableCell>
                                     <TableCell>{customer.address}</TableCell>
                                     <TableCell>{customer.total_amount}</TableCell>
+                                    <TableCell>{customer.paid_amount}</TableCell>
                                     <TableCell>{customer.remaining_amount}</TableCell>
                                     <TableCell>{customer.remark}</TableCell>
                                 </TableRow>

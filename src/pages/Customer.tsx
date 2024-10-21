@@ -102,14 +102,14 @@ const CustomerPage = () => {
                     <Table className="min-w-full">
                         <TableHeader>
                             <TableRow>
-                                <TableHead>Sn</TableHead>
-                                <TableHead>Name</TableHead>
-                                <TableHead>Phone</TableHead>
-                                <TableHead>Address</TableHead>
-                                <TableHead>Total Amount</TableHead>
-                                <TableHead>Paid Amount</TableHead>
-                                <TableHead>Remaining Amount</TableHead>
-                                <TableHead>Remark</TableHead>
+                                <TableHead style={{ backgroundColor: 'rgba(173, 216, 230, 0.7)' }}>Sn</TableHead>
+                                <TableHead style={{ backgroundColor: 'rgba(173, 216, 230, 0.7)' }}>Name</TableHead>
+                                <TableHead style={{ backgroundColor: 'rgba(173, 216, 230, 0.7)' }}>Phone</TableHead>
+                                <TableHead style={{ backgroundColor: 'rgba(173, 216, 230, 0.7)' }}>Address</TableHead>
+                                <TableHead style={{ backgroundColor: 'rgba(173, 216, 230, 0.7)' }}>Total Amount</TableHead>
+                                <TableHead style={{ backgroundColor: 'rgba(173, 216, 230, 0.7)' }}>Paid Amount</TableHead>
+                                <TableHead style={{ backgroundColor: 'rgba(173, 216, 230, 0.7)' }}>Remaining Amount</TableHead>
+                                <TableHead style={{ backgroundColor: 'rgba(173, 216, 230, 0.7)' }}>Remark</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -119,9 +119,9 @@ const CustomerPage = () => {
                                     <TableCell>{customer.name}</TableCell>
                                     <TableCell>{customer.phone}</TableCell>
                                     <TableCell>{customer.address}</TableCell>
-                                    <TableCell>{customer.total_amount}</TableCell>
-                                    <TableCell>{customer.paid_amount}</TableCell>
-                                    <TableCell>{customer.remaining_amount}</TableCell>
+                                    <TableCell style={{ backgroundColor: 'rgba(255, 255, 0, 0.4)' }}>{customer.total_amount}</TableCell>
+                                    <TableCell style={{ backgroundColor: 'rgba(0, 128, 0, 0.6)' }}>{customer.paid_amount}</TableCell>
+                                    <TableCell style={{ backgroundColor: 'rgba(255, 204, 204, 0.9)' }}>{customer.remaining_amount}</TableCell>
                                     <TableCell>{customer.remark}</TableCell>
                                 </TableRow>
                             ))}

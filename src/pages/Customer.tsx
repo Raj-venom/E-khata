@@ -117,7 +117,9 @@ const CustomerPage = () => {
                                 <TableRow key={customer.$id + i} onDoubleClick={() => handleRowClick(customer.$id)} >
                                     <TableCell>{i + 1}</TableCell>
                                     <TableCell>{customer.name}</TableCell>
-                                    <TableCell>{customer.phone}</TableCell>
+                                    <TableCell>
+                                        <a href={`tel:${customer.phone}`}>{customer.phone}</a>
+                                    </TableCell>
                                     <TableCell>{customer.address}</TableCell>
                                     <TableCell style={{ backgroundColor: 'rgba(255, 255, 0, 0.4)' }}>{customer.total_amount}</TableCell>
                                     <TableCell style={{ backgroundColor: 'rgba(0, 128, 0, 0.6)' }}>{customer.paid_amount}</TableCell>

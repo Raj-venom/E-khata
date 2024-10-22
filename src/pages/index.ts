@@ -6,6 +6,7 @@ import PartyPage from "./Party";
 import NewParty from "./NewParty";
 import UpdateParty from "./UpdateParty";
 import Login from "./Login";
+import InventoryPage from "./Inventory";
 
 
 export {
@@ -16,5 +17,6 @@ export {
     UpdateParty,
     NewCustomer,
     UpdateCustomer,
-    Login
+    Login,
+    InventoryPage
 };

@@ -8,6 +8,7 @@ import { RouterProvider, createBrowserRouter } from 'react-router-dom'
 import {
   CustomerPage,
   Dashboard,
+  InventoryPage,
   Login,
   NewCustomer,
   NewParty,
@@ -54,6 +55,10 @@ const router = createBrowserRouter([
       {
         path: '/login',
         element: <Login />,
+      },
+      {
+        path: '/inventory',
+        element: <InventoryPage />,
       }
     ]
   }

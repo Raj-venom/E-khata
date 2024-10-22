@@ -14,6 +14,7 @@ import { Input } from "@/components/ui/input"
 import { useState } from "react"
 import { useNavigate } from 'react-router-dom'
 import partyApi from "@/services/partyApi"
+import { Party } from "@/types/Party"
 
 const formSchema = z.object({
     name: z.string().min(2, {
@@ -27,6 +28,7 @@ const formSchema = z.object({
     total_amount: z.number(),
     remaining_amount: z.number().optional(),
     remark: z.string().optional(),
+    paid_amount: z.number().optional(),
 })
 
 export default function NewParty() {
@@ -45,6 +47,7 @@ export default function NewParty() {
             remaining_amount: 0,
             remark: "",
             alternate_phone: "",
+            paid_amount: 0,
         },
     })
 
@@ -53,21 +56,25 @@ export default function NewParty() {
             setLoading(true)
             setError("")
 
-            console.log(data)
+            // console.log(data)
+            const newData = {
+                ...data,
+                remaining_amount: data.total_amount - (data.paid_amount || 0)
+            }
 
-            const response = await partyApi.createParty(data)
-            
+            const response = await partyApi.createParty(newData as Party)
+
             if (response?.$id) {
-            console.log('party created')
-            navigate('/party')
+                console.log('party created')
+                navigate('/party')
             }
 
         } catch (error: any) {
             console.log(error)
             if (error.response) {
-            setError(error.response.data.error)
+                setError(error.response.data.error)
             } else {
-            setError("An error occurred. Please try again.")
+                setError("An error occurred. Please try again.")
             }
         } finally {
             setLoading(false)
@@ -145,11 +152,11 @@ export default function NewParty() {
                         />
 
                         <FormField
-                            name="remaining_amount"
+                            name="paid_amount"
                             control={form.control}
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel className="">Remaining Amount</FormLabel>
+                                    <FormLabel className="">Paid Amount</FormLabel>
                                     <Input
                                         className="bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:border-green-500"
                                         type="number"
@@ -160,6 +167,7 @@ export default function NewParty() {
                                     <FormMessage className="text-red-400" />
                                 </FormItem>
                             )}
+
                         />
 
                         <FormField

@@ -15,6 +15,7 @@ import { useEffect, useState } from "react"
 import { useParams } from "react-router-dom"
 import { useNavigate } from 'react-router-dom'
 import partyApi from "@/services/partyApi"
+import { Party } from "@/types/Party"
 
 const formSchema = z.object({
     name: z.string().min(2, {
@@ -28,6 +29,9 @@ const formSchema = z.object({
     remaining_amount: z.number().optional(),
     remark: z.string().optional(),
     alternate_phone: z.string().optional(),
+    paid_amount: z.number().optional(),
+    new_payment: z.number().optional(),
+    new_order_amount: z.number().optional(),
 })
 
 export default function UpdateParty() {
@@ -48,6 +52,10 @@ export default function UpdateParty() {
             remaining_amount: 0,
             remark: "",
             alternate_phone: "",
+            new_payment: 0,
+            paid_amount: 0,
+            new_order_amount: 0,
+
         },
     })
 
@@ -71,6 +79,9 @@ export default function UpdateParty() {
                     remaining_amount: partyData.remaining_amount,
                     remark: partyData.remark,
                     alternate_phone: partyData.alternate_phone,
+                    new_payment: 0,
+                    new_order_amount: 0,
+                    paid_amount: partyData.paid_amount,
                 })
             } catch (error) {
                 console.error('Error fetching party:', error)
@@ -92,7 +103,30 @@ export default function UpdateParty() {
 
             console.log(data)
 
-            const response = await partyApi.updateParty(slug as string, data)
+            let newData = {
+                name: data.name,
+                phone: data.phone,
+                address: data.address,
+                total_amount: data.total_amount,
+                remaining_amount: data.remaining_amount,
+                remark: data.remark,
+                paid_amount: data.paid_amount, 
+                // new_order_amount: data.new_order_amount,
+            }
+            
+            // Calculate new remaining amount if there is a new payment
+            if (data.new_payment) {
+                newData.remaining_amount = (newData.remaining_amount || 0) - data.new_payment;
+                newData.paid_amount = (newData.paid_amount || 0) + data.new_payment;
+            }
+            
+            // Update total amount and remaining amount if there is a new order amount
+            if (data.new_order_amount) {
+                newData.total_amount = (newData.total_amount || 0) + data.new_order_amount;
+                newData.remaining_amount = (newData.remaining_amount || 0) + data.new_order_amount;
+            }
+            
+            const response = await partyApi.updateParty(slug as string, newData as Party)
 
             if (response?.$id) {
                 console.log('Party updated successfully')
@@ -119,127 +153,180 @@ export default function UpdateParty() {
     return (
         <div className='min-h-screen flex flex-col justify-center items-center'>
             <h2 className="text-4xl mr-4">
-                Update Party
+            Update Party
             </h2>
 
             <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2 mt-2">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2 mt-2">
+                <div className="flex space-x-4">
+                <div className="flex-1">
                     <FormField
-                        name="name"
-                        control={form.control}
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel className="">Name</FormLabel>
-                                <Input
-                                    className="bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:border-green-500"
-                                    {...field}
-                                />
-                                <FormMessage className="text-red-400" />
-                            </FormItem>
-                        )}
+                    name="name"
+                    control={form.control}
+                    render={({ field }) => (
+                        <FormItem>
+                        <FormLabel className="">Name</FormLabel>
+                        <Input
+                            className="bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:border-green-500"
+                            {...field}
+                        />
+                        <FormMessage className="text-red-400" />
+                        </FormItem>
+                    )}
                     />
 
                     <FormField
-                        name="phone"
-                        control={form.control}
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel className="">Phone</FormLabel>
-                                <Input
-                                    className="bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:border-green-500"
-                                    {...field}
-                                />
-                                <FormMessage className="text-red-400" />
-                            </FormItem>
-                        )}
+                    name="phone"
+                    control={form.control}
+                    render={({ field }) => (
+                        <FormItem>
+                        <FormLabel className="">Phone</FormLabel>
+                        <Input
+                            className="bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:border-green-500"
+                            {...field}
+                        />
+                        <FormMessage className="text-red-400" />
+                        </FormItem>
+                    )}
                     />
 
                     <FormField
-                        name="address"
-                        control={form.control}
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel className="">Address</FormLabel>
-                                <Input
-                                    className="bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:border-green-500"
-                                    {...field}
-                                />
-                                <FormMessage className="text-red-400" />
-                            </FormItem>
-                        )}
+                    name="address"
+                    control={form.control}
+                    render={({ field }) => (
+                        <FormItem>
+                        <FormLabel className="">Address</FormLabel>
+                        <Input
+                            className="bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:border-green-500"
+                            {...field}
+                        />
+                        <FormMessage className="text-red-400" />
+                        </FormItem>
+                    )}
+                    />
+                </div>
+
+                <div className="flex-1">
+                    <FormField
+                    name="total_amount"
+                    control={form.control}
+                    render={({ field }) => (
+                        <FormItem>
+                        <FormLabel className="">Total Amount</FormLabel>
+                        <Input
+                            className="bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:border-green-500"
+                            type="number"
+                            {...field}
+                            value={field.value || ""}
+                            onChange={(e) => field.onChange(Number(e.target.value))}
+                            disabled={true}
+                        />
+                        <FormMessage className="text-red-400" />
+                        </FormItem>
+                    )}
                     />
 
                     <FormField
-                        name="total_amount"
-                        control={form.control}
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel className="">Total Amount</FormLabel>
-                                <Input
-                                    className="bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:border-green-500"
-                                    type="number"
-                                    {...field}
-                                    value={field.value || ""}
-                                    onChange={(e) => field.onChange(Number(e.target.value))}
-                                />
-                                <FormMessage className="text-red-400" />
-                            </FormItem>
-                        )}
+                    name="paid_amount"
+                    control={form.control}
+                    render={({ field }) => (
+                        <FormItem>
+                        <FormLabel className="">Paid Amount</FormLabel>
+                        <Input
+                            className="bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:border-green-500"
+                            type="number"
+                            {...field}
+                            value={field.value || ""}
+                            onChange={(e) => field.onChange(Number(e.target.value))}
+                            disabled={true}
+                            placeholder="money paid by customer"
+                        />
+                        <FormMessage className="text-red-400" />
+                        </FormItem>
+                    )}
                     />
 
                     <FormField
-                        name="remaining_amount"
-                        control={form.control}
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel className="">Remaining Amount</FormLabel>
-                                <Input
-                                    className="bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:border-green-500"
-                                    type="number"
-                                    {...field}
-                                    value={field.value || ""}
-                                    onChange={(e) => field.onChange(Number(e.target.value))}
-                                />
-                                <FormMessage className="text-red-400" />
-                            </FormItem>
-                        )}
+                    name="remaining_amount"
+                    control={form.control}
+                    render={({ field }) => (
+                        <FormItem>
+                        <FormLabel className="">Remaining Amount</FormLabel>
+                        <Input
+                            className="bg-red-700 border-red-600 text-white placeholder-red-400 focus:border-red-500"
+                            type="number"
+                            {...field}
+                            value={field.value || ""}
+                            onChange={(e) => field.onChange(Number(e.target.value))}
+                            disabled={true}
+                        />
+                        <FormMessage className="text-red-400" />
+                        </FormItem>
+                    )}
+                    />
+                </div>
+
+                <div className="flex-1">
+                    <FormField
+                    name="new_payment"
+                    control={form.control}
+                    render={({ field }) => (
+                        <FormItem>
+                        <FormLabel className="">New Payment</FormLabel>
+                        <Input
+                            className="bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:border-green-500"
+                            type="number"
+                            {...field}
+                            value={field.value || ""}
+                            onChange={(e) => field.onChange(Number(e.target.value))}
+                            placeholder="money paid by customer"
+                        />
+                        <FormMessage className="text-red-400" />
+                        </FormItem>
+                    )}
                     />
 
                     <FormField
-                        name="remark"
-                        control={form.control}
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel className="">Remark</FormLabel>
-                                <Input
-                                    className="bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:border-green-500"
-                                    {...field}
-                                />
-                                <FormMessage className="text-red-400" />
-                            </FormItem>
-                        )}
+                    name="new_order_amount"
+                    control={form.control}
+                    render={({ field }) => (
+                        <FormItem>
+                        <FormLabel className="">New Order Amount</FormLabel>
+                        <Input
+                            className="bg-gray-900 border-gray-600 text-white placeholder-gray-400 focus:border-green-500"
+                            type="number"
+                            {...field}
+                            value={field.value || ""}
+                            onChange={(e) => field.onChange(Number(e.target.value))}
+                            placeholder="new order amount"
+                        />
+                        <FormMessage className="text-red-400" />
+                        </FormItem>
+                    )}
                     />
 
                     <FormField
-                        name="alternate_phone"
-                        control={form.control}
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel className="">Alternate Phone</FormLabel>
-                                <Input
-                                    className="bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:border-green-500"
-                                    {...field}
-                                />
-                                <FormMessage className="text-red-400" />
-                            </FormItem>
-                        )}
+                    name="remark"
+                    control={form.control}
+                    render={({ field }) => (
+                        <FormItem>
+                        <FormLabel className="">Remark</FormLabel>
+                        <Input
+                            className="bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:border-green-500"
+                            {...field}
+                        />
+                        <FormMessage className="text-red-400" />
+                        </FormItem>
+                    )}
                     />
 
-                    <Button type="submit" disabled={isLoading}>
-                        {isLoading ? "Updating..." : "Update Party"}
+                    <Button type="submit" disabled={isLoading} className="mt-4">
+                    {isLoading ? "Updating..." : "Update Party"}
                     </Button>
                     {error && <p className="text-red-400">{error}</p>}
-                </form>
+                </div>
+                </div>
+            </form>
             </Form>
         </div>
     )

@@ -7,4 +7,5 @@ export interface Party  {
     total_amount: number;
     remaining_amount: number;
     remark: string;
+    paid_amount: number;
 }

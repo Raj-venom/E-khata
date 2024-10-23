@@ -1,14 +1,20 @@
-// import axios from 'axios'
-import axios from 'axios'
+import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
+import { logout } from '../../features/auth/authSlice.ts'
+import authService from "@/services/auth.ts"
 
 function Header() {
+    const authStatus = useSelector((state: any) => state.auth.status)
     const navigate = useNavigate()
+    const dispatch = useDispatch()
 
     const handleLogout = async () => {
         try {
-            await axios.get('/v1/user/logout')
-            navigate('/login')
+            authService.logout().then(() => {
+                dispatch(logout())
+                navigate('/login')
+            })
+
         } catch (error) {
             console.error(error)
         }
@@ -50,10 +56,13 @@ function Header() {
                     </div>
                 </div>
                 <div>
-                    <button
-                        onClick={() => handleLogout()}
-                        className='text-white inline-bock px-6 py-2 duration-200 hover:text-black hover:bg-blue-100 rounded-full'>
-                        Logout</button>
+                    {
+                        authStatus && (<button
+                            onClick={() => handleLogout()}
+                            className='text-white inline-bock px-6 py-2 duration-200 hover:text-black hover:bg-blue-100 rounded-full'>
+                            Logout
+                        </button>)
+                    }
                 </div>
 
             </div>

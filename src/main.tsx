@@ -3,6 +3,9 @@ import { createRoot } from 'react-dom/client'
 import App from './App.tsx'
 import './index.css'
 import { RouterProvider, createBrowserRouter } from 'react-router-dom'
+import AuthLayout from "./components/AuthLayout.tsx"
+import { Provider } from 'react-redux'
+import store from './store/store.ts'
 
 
 import {
@@ -25,40 +28,84 @@ const router = createBrowserRouter([
     element: <App />,
     children: [
       {
+        path: '/',
+        element: (
+          <AuthLayout authentication>
+            <Dashboard />
+          </AuthLayout>
+        )
+      },
+      {
         path: '/dashboard',
-        element: <Dashboard />,
+        element: (
+          <AuthLayout authentication>
+            <Dashboard />
+          </AuthLayout>
+        )
       },
       {
         path: '/customer',
-        element: <CustomerPage />,
+        element: (
+          <AuthLayout authentication>
+            <CustomerPage />
+          </AuthLayout>
+        )
       },
       {
         path: '/party',
-        element: <PartyPage />,
+        element: (
+          <AuthLayout authentication>
+            <PartyPage />
+          </AuthLayout>
+        )
       },
       {
         path: '/new-party',
-        element: <NewParty />,
+        element: (
+          <AuthLayout authentication>
+            <NewParty />
+          </AuthLayout>
+        )
       },
       {
         path: '/update-party/:slug',
-        element: <UpdateParty />,
+        element: (
+          <AuthLayout authentication>
+            <UpdateParty />
+          </AuthLayout>
+        )
       },
       {
         path: '/new-customer',
-        element: <NewCustomer />,
+        element: (
+          <AuthLayout authentication>
+            <NewCustomer />
+          </AuthLayout>
+        )
       },
       {
         path: '/update-customer/:slug',
-        element: <UpdateCustomer />,
+        element: (
+          <AuthLayout authentication>
+            <UpdateCustomer />
+          </AuthLayout>
+        )
       },
       {
         path: '/login',
-        element: <Login />,
+        element: (
+          <AuthLayout authentication={false}>
+            <Login />
+          </AuthLayout>
+        )
       },
       {
         path: '/inventory',
-        element: <InventoryPage />,
+        element: (
+          <AuthLayout authentication>
+            <InventoryPage />
+          </AuthLayout>
+        )
       }
     ]
   }
@@ -66,6 +113,8 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <RouterProvider router={router} />
+    <Provider store={store} >
+      <RouterProvider router={router} />
+    </Provider>
   </StrictMode>,
 )

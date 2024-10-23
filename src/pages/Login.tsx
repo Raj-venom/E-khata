@@ -14,6 +14,8 @@ import { Input } from "@/components/ui/input"
 import { useState } from "react"
 import { useNavigate } from 'react-router-dom'
 import authService from "@/services/auth"
+import { useDispatch } from "react-redux"
+import { login as authLogin } from "@/features/auth/authSlice"
 
 const formSchema = z.object({
     email: z.string().min(2, {
@@ -28,6 +30,7 @@ export default function Login() {
     const navigate = useNavigate()
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState("")
+    const dispatch = useDispatch()
 
 
     // 1. Define your form.
@@ -46,11 +49,15 @@ export default function Login() {
             setLoading(true)
             setError("")
 
-            const response = await authService.login(data.email, data.password)
+            const session = await authService.login(data.email, data.password)
 
-            if (response) {
-                console.log('logged in ')
-                navigate('/dashboard')
+            if (session) {
+                const userData = await authService.getCurrentUser()
+                if (userData) {
+                    dispatch(authLogin({ userData }))
+                    navigate('/dashboard')
+                }
+
             }
 
 

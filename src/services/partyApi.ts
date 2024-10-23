@@ -1,5 +1,5 @@
 import conf from '../conf/conf';
-import { Client, ID, Databases } from "appwrite";
+import { Client, ID, Databases, Query } from "appwrite";
 
 class Party {
     client = new Client();
@@ -12,9 +12,37 @@ class Party {
         this.databases = new Databases(this.client);
     }
 
-    async getAllParties() {
+    async getAllParties(showRemainingAmountOnly: boolean, searchTerm: string, paidAmountUserOnly: boolean) {
         try {
-            return await this.databases.listDocuments(conf.appwriteDatabaseId, conf.partyCollectionId);
+            const queries = []
+
+            if (showRemainingAmountOnly) {
+                queries.push(Query.greaterThan('remaining_amount', 0))
+            }
+
+            if (searchTerm) {
+                queries.push(Query.or([
+                    Query.contains('name', searchTerm),
+                    Query.contains('phone', searchTerm),
+                ]))
+            }
+
+            if (paidAmountUserOnly) {
+                queries.push(Query.lessThanEqual('remaining_amount', 0))
+            }
+
+            return await this.databases.listDocuments(
+                conf.appwriteDatabaseId,
+                conf.partyCollectionId,
+                [
+                    Query.limit(10000),
+                    Query.offset(0),
+                    Query.orderAsc('remaining_amount'),
+
+                    ...queries
+                ]
+
+            );
         } catch (error) {
             console.log("Appwrite service :: getAllParties :: error", error);
         }

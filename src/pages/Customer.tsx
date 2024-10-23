@@ -15,31 +15,24 @@ import { useNavigate } from 'react-router-dom'
 // import Header from '@/components/Header/Header';
 
 const CustomerPage = () => {
-    const navigate = useNavigate()
-    const [customers, setCustomers] = useState<Customer[]>([{ $id: "", name: "", phone: "", address: "", total_amount: 0, remaining_amount: 0, remark: "", paid_amount: 0 }]);
+    const navigate = useNavigate();
+    const [customers, setCustomers] = useState<Customer[]>([]);
     const [searchTerm, setSearchTerm] = useState('');
-    const [showRemainingOnly, setShowRemainingOnly] = useState(true);
+    const [showRemainingAmountOnly, setShowRemainingAmountOnly] = useState(true);
+    const [paidAmountUserOnly, setPaidAmountUserOnly] = useState(false);
     const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
 
     useEffect(() => {
         const fetchCustomers = async () => {
             try {
-                const response = await customerApi.getAllCustomers();
-                // if (response?.documents) {
-                //     const data: Customer[] = response.documents;
-                //     setCustomers(response.documents);
-                //     console.log(data, "data");
-                // } else {
-                //     console.error('No data found in response');
-                // }
-
-                console.log(response, "response");
+                const response = await customerApi.getAllCustomers(showRemainingAmountOnly, searchTerm.trim(), paidAmountUserOnly);
                 if (response?.documents) {
                     // @ts-ignore
                     const data: Customer[] = response.documents;
+                    console.log(data, 'data');
                     setCustomers(data);
-                    console.log(data, "data");
                 } else {
+                    setCustomers([]);
                     console.error('No data found in response');
                 }
             } catch (error) {
@@ -48,14 +41,11 @@ const CustomerPage = () => {
         };
 
         fetchCustomers();
-    }, []);
+    }, [showRemainingAmountOnly, searchTerm, paidAmountUserOnly]);
+
+
 
     const filteredCustomers = customers
-        .filter(customer =>
-            (customer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                customer.phone.toLowerCase().includes(searchTerm.toLowerCase())) &&
-            (!showRemainingOnly || customer.remaining_amount > 0)
-        )
         .sort((a, b) => {
             if (sortOrder === 'asc') {
                 return a.remaining_amount - b.remaining_amount;
@@ -70,8 +60,6 @@ const CustomerPage = () => {
 
     return (
         <>
-
-
             <div className="container mx-auto p-4">
                 <h1 className="text-2xl font-bold mb-4">Customer List</h1>
                 <div className='flex flex-col md:flex-row justify-between mb-4'>
@@ -79,24 +67,56 @@ const CustomerPage = () => {
                         type="text"
                         placeholder="Search customers"
                         value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
+                        onChange={(e) => {
+                            setSearchTerm(e.target.value);
+                            setPaidAmountUserOnly(false);
+                            setShowRemainingAmountOnly(false);
+
+                        }}
                         className="p-2 border border-gray-600 rounded mb-2 md:mb-0 md:mr-2"
                     />
                     <Button onClick={() => navigate('/new-customer')}>Add Customer</Button>
                 </div>
                 <div className='flex flex-col md:flex-row justify-between mb-4'>
-                    <label className="flex items-center mb-2 md:mb-0">
-                        <input
-                            type="checkbox"
-                            checked={showRemainingOnly}
-                            onChange={(e) => setShowRemainingOnly(e.target.checked)}
-                            className="mr-2"
-                        />
-                        Show only customers with remaining amount
-                    </label>
+                    <div className='flex gap-4 '>
+                        <label className="flex items-center mb-2 md:mb-0">
+                            <input
+                                type="checkbox"
+                                checked={showRemainingAmountOnly}
+                                onChange={(e) => {
+                                    setShowRemainingAmountOnly(e.target.checked);
+                                    if (e.target.checked) {
+                                        setPaidAmountUserOnly(false);
+                                    }
+                                }}
+                                className="mr-2"
+                            />
+                            Show Remaining Amount Only
+                        </label>
+
+                        <label className="flex items-center mb-2 md:mb-0">
+                            <input
+                                type="checkbox"
+                                checked={paidAmountUserOnly}
+                                onChange={(e) => {
+                                    setPaidAmountUserOnly(e.target.checked);
+                                    if (e.target.checked) {
+                                        setShowRemainingAmountOnly(false);
+                                    }
+                                }}
+                                className="mr-2"
+                            />
+                            Show Paid Amount Customers Only
+                        </label>
+
+                    </div>
+
+
                     <Button onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}>
                         Sort by Remaining Amount ({sortOrder === 'asc' ? 'Ascending' : 'Descending'})
                     </Button>
+
+
                 </div>
                 <div className="overflow-x-auto">
                     <Table className="min-w-full">
@@ -113,7 +133,10 @@ const CustomerPage = () => {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {filteredCustomers.map((customer, i) => (
+                            {filteredCustomers.length === 0 && (<TableRow><TableCell colSpan={8}>No data found</TableCell></TableRow>)}
+
+
+                            {filteredCustomers.length > 0 && filteredCustomers.map((customer, i) => (
                                 <TableRow key={customer.$id + i} onDoubleClick={() => handleRowClick(customer.$id)} >
                                     <TableCell>{i + 1}</TableCell>
                                     <TableCell>{customer.name}</TableCell>

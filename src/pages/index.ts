@@ -7,6 +7,8 @@ import NewParty from "./NewParty";
 import UpdateParty from "./UpdateParty";
 import Login from "./Login";
 import InventoryPage from "./Inventory";
+import NewProduct from "./NewProduct";
+import UpdateProduct from "./UpdateProduct";
 
 
 export {
@@ -18,5 +20,7 @@ export {
     NewCustomer,
     UpdateCustomer,
     Login,
-    InventoryPage
+    InventoryPage,
+    NewProduct,
+    UpdateProduct
 };

@@ -17,25 +17,20 @@ const InventoryPage = () => {
     const navigate = useNavigate();
     const [products, setProducts] = useState<Product[]>([]);
     const [searchTerm, setSearchTerm] = useState('');
-    const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
+    const [sortByStock, setSortByStock] = useState(false);
+
 
     useEffect(() => {
         const fetchProducts = async () => {
             try {
                 const response = await inventoryApi.getAllProducts();
-                if (response?.documents[0].$id) {
-
-                    const data: Product[] = response.documents.map((doc: any) => ({
-                        $id: doc.$id,
-                        name: doc.name || "",
-                        units: doc.units || 0,
-                        price: doc.price || 0,
-                        description: doc.description || ""
-                    }));
-
+                if (response?.documents) {
+                    // @ts-ignore
+                    const data: Product[] = response.documents;
                     setProducts(data);
                     console.log(data, "data");
                 } else {
+                    setProducts([]);
                     console.error('No data found in response');
                 }
             } catch (error) {
@@ -51,12 +46,12 @@ const InventoryPage = () => {
             product.name.toLowerCase().includes(searchTerm.toLowerCase())
         )
         .sort((a, b) => {
-            if (sortOrder === 'asc') {
-                return a.price - b.price;
-            } else {
-                return b.price - a.price;
+            if (sortByStock) {
+                return a.stock - b.stock;
             }
+            return a.name.localeCompare(b.name);
         });
+
 
     const handleRowClick = (id: string) => {
         navigate(`/update-product/${id}`);
@@ -76,9 +71,18 @@ const InventoryPage = () => {
                 <Button onClick={() => navigate('/new-product')}>Add Product</Button>
             </div>
             <div className='flex flex-col md:flex-row justify-between mb-4'>
-                <Button onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}>
-                    Sort by Price ({sortOrder === 'asc' ? 'Ascending' : 'Descending'})
-                </Button>
+                <div className='flex gap-4 '>
+
+                    <label className="flex items-center mb-2 md:mb-0">
+                        <input
+                            type="checkbox"
+                            checked={sortByStock}
+                            onChange={() => setSortByStock(!sortByStock)}
+                            className="mr-2"
+                        />
+                        Sort by stock
+                    </label>
+                </div>
             </div>
             <div className="overflow-x-auto">
                 <Table className="min-w-full">
@@ -86,18 +90,21 @@ const InventoryPage = () => {
                         <TableRow>
                             <TableHead style={{ backgroundColor: 'rgba(173, 216, 230, 0.7)' }}>Sn</TableHead>
                             <TableHead style={{ backgroundColor: 'rgba(173, 216, 230, 0.7)' }}>Name</TableHead>
-                            <TableHead style={{ backgroundColor: 'rgba(173, 216, 230, 0.7)' }}>Quantity</TableHead>
+                            <TableHead style={{ backgroundColor: 'rgba(173, 216, 230, 0.7)' }}>Stock</TableHead>
                             <TableHead style={{ backgroundColor: 'rgba(173, 216, 230, 0.7)' }}>Price</TableHead>
                             <TableHead style={{ backgroundColor: 'rgba(173, 216, 230, 0.7)' }}>Description</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {filteredProducts.map((product, i) => (
+                        {filteredProducts.length === 0 && (<TableRow><TableCell colSpan={5}>No data found</TableCell></TableRow>)}
+                        {filteredProducts.length > 0 && filteredProducts.map((product, i) => (
                             <TableRow key={product.$id + i} onDoubleClick={() => handleRowClick(product.$id)} >
                                 <TableCell>{i + 1}</TableCell>
                                 <TableCell>{product.name}</TableCell>
-                                <TableCell>{product.units}</TableCell>
-                                <TableCell style={{ backgroundColor: 'rgba(255, 255, 0, 0.4)' }}>{product.price}</TableCell>
+                                <TableCell style={{ backgroundColor: product.stock <= 10 ? 'rgba(255, 0, 0, 1)' : 'rgba(0, 128, 0, 0.6)' }}>
+                                    {product.stock}
+                                </TableCell>
+                                <TableCell style={{ backgroundColor: 'rgba(255, 255, 0, 0.6)' }}>{product.price}</TableCell>
                                 <TableCell>{product.description}</TableCell>
                             </TableRow>
                         ))}

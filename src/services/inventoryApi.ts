@@ -39,6 +39,21 @@ class Inventory {
         }
     }
 
+    async getProductById(id: string) {
+        try {
+            return await this.databases.getDocument(conf.appwriteDatabaseId, conf.productCollectionId, id);
+        } catch (error) {
+            console.log("Appwrite service :: getProductById :: error", error);
+        }
+    }
+
+    async updateProduct(id: string, data: any) {
+        try {
+            return await this.databases.updateDocument(conf.appwriteDatabaseId, conf.productCollectionId, id, data);
+        } catch (error) {
+            console.log("Appwrite service :: updateProduct :: error", error);
+        }
+    }
 
 
 }

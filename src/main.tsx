@@ -17,7 +17,9 @@ import {
   NewParty,
   PartyPage,
   UpdateCustomer,
-  UpdateParty
+  UpdateParty,
+  NewProduct,
+  UpdateProduct
 
 } from "./pages/index.ts"
 
@@ -106,7 +108,24 @@ const router = createBrowserRouter([
             <InventoryPage />
           </AuthLayout>
         )
+      },
+      {
+        path: '/new-product',
+        element: (
+          <AuthLayout authentication>
+            <NewProduct />
+          </AuthLayout>
+        )
+      },
+      {
+        path: '/update-product/:slug',
+        element: (
+          <AuthLayout authentication>
+            <UpdateProduct />
+          </AuthLayout>
+        )
       }
+
     ]
   }
 ])

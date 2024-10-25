@@ -28,6 +28,13 @@ const PaymentChart = ({ customerTotal, wholesalerTotal }: {
                 display: true,
                 text: 'Payment Overview',
             },
+            datalabels: {
+                display: true,
+                color: 'white',
+                font: {
+                    weight: 'bold',
+                },
+            },
         },
     };
     return <Bar data={data} options={options as any} />;

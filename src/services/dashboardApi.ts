@@ -39,6 +39,27 @@ class Dashboard {
         }
     }
 
+    async getProductStock() {
+        try {
+            const products = await this.databases.listDocuments(
+                conf.appwriteDatabaseId,
+                conf.productCollectionId,
+                []
+            );
+
+            const productNames = products.documents.map(doc => doc.name);
+            const productStock = products.documents.map(doc => doc.stock);
+
+            return {
+                productNames,
+                productStock
+            };
+        } catch (error) {
+            console.error('Error fetching product stock:', error);
+            throw error;
+        }
+    }
+
 }
 
 const dashboardApi = new Dashboard();
